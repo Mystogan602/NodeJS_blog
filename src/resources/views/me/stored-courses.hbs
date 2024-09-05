@@ -17,7 +17,7 @@
           <option value="delete">Delete</option>
         </select>
 
-        <button class="btn btn-primary btn-sm execute-btn disabled">Execute</button>
+        <button class="btn btn-primary btn-sm execute-btn" disabled>Execute</button>
       </div>
     </div>
 
@@ -121,22 +121,14 @@
           renderExecuteButton();
         });
 
-        // Execute button clicked
-        executeBtn.on('submit', function(e){
-          var isSubmittable = !$(this).hasClass('disabled');
-          if (!isSubmittable){
-            e.preventDefault();            
-          }
-        });
-
         //Re-render Execution button
         function renderExecuteButton(){
           var checkedCount = $('input[name="courseIds[]"]:checked').length;
           if (checkedCount > 0) {
-            executeBtn.removeClass('disabled');
+            executeBtn.attr('disabled', false);
           }
           else{
-            executeBtn.addClass('disabled');
+            executeBtn.attr('disabled', true);
           }
         }
     });
