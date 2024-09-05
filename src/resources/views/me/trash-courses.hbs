@@ -1,7 +1,7 @@
 <div class="mt-4">
     <div>
-      <h3>My Courses</h3>
-      <a href="/me/trash/courses">Recycle Bin ({{this.deletedCount}})</a>
+      <a href="/me/stored/courses">My Courses</a>
+      <h3>Deleted Courses</h3>
     </div>
     <table class="table mt-4">
         <thead>
@@ -9,7 +9,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Level</th>
-                <th scope="col" colspan="2">Created Time</th>
+                <th scope="col" colspan="2">Deleted Time</th>
             </tr>
         </thead>
         <tbody>
@@ -18,17 +18,17 @@
                 <th scope="row">{{sum @index 1}}</th>
                 <td>{{this.name}}</td>
                 <td>{{this.level}}</td>
-                <td>{{this.createdAt}}</td>
+                <td>{{this.deletedAt}}</td>
                 <td>
-                    <a href="/courses/{{this._id}}/edit" class="btn btn-link">Update</a>
-                    <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-course-model">Delete</a>
+                    <a href="" class="btn btn-link btn-restore" data-id="{{this._id}}">Restore</a>
+                    <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-course-model">Delete permanently</a>
                 </td>
             </tr>
             {{else}}
             <tr>
               <td colspan="5" class="text-center">
-                You do not have any courses.
-                <a href="/courses/create">Upload course</a>
+                Recycle bin is empty.
+                <a href="/me/stored/courses">My courses</a>
               </td>
             </tr>
             {{/each}}
@@ -42,41 +42,53 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Delete this course?</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Delete permanently this course?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <p>Are you definitely want to delete this course?</p>
+        <p>This action can not restore. Do you still want to delete this course?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button id="btn-delete-course" type="button" class="btn btn-danger">Confirm</button>
+        <button id="btn-delete-course" type="button" class="btn btn-danger">Sure</button>
       </div>
     </div>Chắc chắn
   </div>
 </div>
 
-{{!-- delete hidden form --}}
 
 <form name="delete-course-form" method="post"></form>
+<form name="restore-course-form" method="post"></form>
 
 <script>
     document.addEventListener('DOMContentLoaded', function(){
         var courseId;
         var deleteForm = document.forms['delete-course-form'];
+        var restoreForm = document.forms['restore-course-form'];
+        var btnDeleteCourse = document.getElementById('btn-delete-course');
+        var restoreBtn = $('.btn-restore');
+        
         // when dialog confirm clicked
         $('#delete-course-model').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             courseId = button.data('id');
         });
 
-        var btnDeleteCourse = document.getElementById('btn-delete-course');
         //when clicking delete course
         btnDeleteCourse.onclick = function(){
-            deleteForm.action = '/courses/' + courseId + '?_method=DELETE';
+            deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE';
             deleteForm.submit();
         }
+
+        //restore btn clicked
+        restoreBtn.click(function(e){
+          e.preventDefault();
+          var courseId = $(this).data('id');
+          restoreForm.action = '/courses/' + courseId + '/restore?_method=PATCH';
+          restoreForm.submit();
+          
+        });
     });
 </script>
