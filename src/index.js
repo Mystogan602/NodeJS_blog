@@ -4,7 +4,7 @@ const hbs = require('express-handlebars');
 const path = require('path');
 const methodOverride = require('method-override');
 
-const SortMiddleware = require('./app/middlewares/sortMiddlewaree');
+const SortMiddleware = require('./app/middlewares/sortMiddleware');
 
 const route = require('./routes');
 const db = require('./config/db');
